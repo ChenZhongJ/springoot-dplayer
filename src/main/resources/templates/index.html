@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>index</title>
+    <link rel="stylesheet" href="../DPlayer/DPlayer.min.css" />
+</head>
+<body>
+
+<div id="dplayer">
+
+</div>
+
+<script type="text/javascript" src="../jq/jquery.min.js"></script>
+<script type="text/javascript" src="../DPlayer/DPlayer.min.js"></script>
+
+<script type="text/javascript">
+
+    let quality
+
+    $.ajax({
+        type: 'GET',
+        url: '/video',
+        sync: true,
+        data:{'videoId': 'v_123'},
+        success:function (data) {
+            var video_src = data.data;
+
+            let name = '';
+            let quality = [];
+
+            for(var i = 0; i< video_src.length; i++){
+                switch (i){
+                    case 0: name = '标清';
+                        break;
+                    case 1: name = '高清';
+                        break;
+                    case 2: name = '超清';
+                        break;
+                }
+                quality[i]= {'name': name, 'url': video_src[0]};
+            }
+            player(quality, video_src.length-1, 'v_123');
+        }
+    });
+
+    const player = function (quality, defaultQuality,videoId) {
+
+        const dp = new DPlayer({
+            container: document.getElementById('dplayer'),
+            // 视频自动播放
+            autoplay: false,
+            // 主题色
+            theme: '#FADFA3',
+            // 视频循环播放
+            loop: true,
+            lang: 'zh-cn',
+            // 预加载
+            preload: 'auto',
+            video: {
+                quality: quality,
+                // 默认清晰度
+                defaultQuality: defaultQuality,
+            },
+            danmaku: {
+                id: videoId,
+                api: '/dplayer/',
+                maximum: 1000,
+                bottom: '15%',
+                unlimited: true,
+                user: 1
+            },
+        });
+
+        dp.danmaku.show();
+
+        console.log(dp.dan);
+
+        console.log(dp.danIndex);
+
+        // dp.on('danmaku_send', function (msg) {
+        //     // let data = {'text': msg.text, 'color': '#fff', 'type': 'bottom'};
+        //     console.log(msg);
+        // });
+        //
+        // dp.on('danmaku_show', function (data) {
+        //     console.log(data);
+        // })
+        //
+    };
+
+
+</script>
+</body>
+</html>
